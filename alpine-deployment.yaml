@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alpine-deployment-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alpine-test
+  template:
+    metadata:
+      labels:
+        app: alpine-test
+    spec:
+      containers:
+        - name: alpine
+          image: alpine:3.14.2
