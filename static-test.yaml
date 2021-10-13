@@ -14,13 +14,19 @@ kind: Ingress
 metadata:
   name: test-static-ingress
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/backend-protocol: HTTPS
     nginx.ingress.kubernetes.io/rewrite-target: /bhdev/$2
     nginx.ingress.kubernetes.io/upstream-vhost: nyc3.digitaloceanspaces.com
 spec:
+  tls:
+  - hosts:
+    - stage0.bh.dev
+    secretName: test-tls-cert
   rules:
-  - http: 
+  - host: stage0.bh.dev
+    http: 
       paths:
       - path: /static(/|$)(.*)
         pathType: Prefix
@@ -37,14 +43,20 @@ kind: Ingress
 metadata:
   name: test-ui-ingress
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/backend-protocol: HTTPS
     nginx.ingress.kubernetes.io/rewrite-target: /bhdev/test-ui/v0.1.0/index.html
     nginx.ingress.kubernetes.io/upstream-vhost: nyc3.digitaloceanspaces.com
 
 spec:
+  tls:
+  - hosts:
+    - stage0.bh.dev
+    secretName: test-tls-cert
   rules:
-  - http:
+  - host: stage0.bh.dev
+    http:
       paths:
       - path: /test-ui
         pathType: Prefix
@@ -61,14 +73,20 @@ kind: Ingress
 metadata:
   name: test-ui-ingress-static
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/backend-protocol: HTTPS
     nginx.ingress.kubernetes.io/rewrite-target: /bhdev/test-ui/v0.1.0/static/$2
     nginx.ingress.kubernetes.io/upstream-vhost: nyc3.digitaloceanspaces.com
 
 spec:
+  tls:
+  - hosts:
+    - stage0.bh.dev
+    secretName: test-tls-cert
   rules:
-  - http:
+  - host: stage0.bh.dev
+    http:
       paths:
       - path: /test-ui/static(/|$)(.*)
         pathType: Prefix

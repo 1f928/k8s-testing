@@ -13,8 +13,10 @@ spec:
         app: test
     spec:
       containers:
-        - name: test
-          image: test-api:1.0.0
+      - name: test
+        image: bhid/test-api:0.0.1
+      imagePullSecrets:
+      - name: regcred
 
 ---
 
@@ -40,9 +42,15 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
     kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
+  tls:
+  - hosts:
+    - stage0.bh.dev
+    secretName: test-tls-cert
   rules:
-  - http:
+  - host: stage0.bh.dev
+    http:
       paths:
       - path: /api/test(/|$)(.*)
         pathType: Prefix
