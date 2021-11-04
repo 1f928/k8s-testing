@@ -1,20 +1,28 @@
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deployment-test
+  name: api-covid
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: test
+      app: api-covid
   template:
     metadata:
       labels:
-        app: test
+        app: api-covid
     spec:
       containers:
-      - name: test
-        image: bhid/test-api:0.0.1
+      - name: api-covid
+        image: bhid/api-covid:1.0.1
+        env:
+        - name: APP_NAME
+          value: COVID-19 API
+        - name: APP_PORT
+          value: "3100"
+        - name: LOG_LEVEL
+          value: warn
       imagePullSecrets:
       - name: regcred
 
@@ -23,13 +31,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: test-service
+  name: api-covid-service
 spec:
   type: NodePort
   selector:
-    app: test
+    app: api-covid
   ports:
-  - port: 1234
+  - port: 3100
     targetPort: 3100
     protocol: TCP
 
@@ -38,7 +46,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: test-ingress
+  name: api-covid-ingress
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/rewrite-target: /$2
@@ -46,16 +54,16 @@ metadata:
 spec:
   tls:
   - hosts:
-    - stage0.bh.dev
-    secretName: test-tls-cert
+    - api.bh.dev
+    secretName: bhdev-api-prod-tls
   rules:
-  - host: stage0.bh.dev
+  - host: api.bh.dev
     http:
       paths:
-      - path: /api/test(/|$)(.*)
+      - path: /covid(/|$)(.*)
         pathType: Prefix
         backend:
           service:
-            name: test-service
+            name: api-covid-service
             port:
-              number: 1234
+              number: 3100
